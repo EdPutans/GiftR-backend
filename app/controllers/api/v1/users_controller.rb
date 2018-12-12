@@ -30,6 +30,7 @@ class Api::V1::UsersController < ApplicationController
 
   def user_params
       params.require(:user).permit(:first_name, :last_name, :email, :password, :password_digest, :age, :img_url)
+      # password_digest or stretch with JWT
   end
 
 end
