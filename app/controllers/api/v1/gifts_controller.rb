@@ -7,7 +7,7 @@ class Api::V1::GiftsController < ApplicationController
     end
 
     def create
-        @gift = Gift.new(gift_params)
+        @gift = Gift.create(gift_params)
         if @gift.save
             render json: @gift
         else
@@ -43,7 +43,7 @@ class Api::V1::GiftsController < ApplicationController
     private
 
     def gift_params
-        require(:params).permit(:id, :name, :url, :img_url, :rating, :description, :price)
+        params.require(:gift).permit(:id, :name, :url, :img_url, :rating, :description, :price, :user_id)
     end
 
 end
