@@ -24,10 +24,20 @@ class Api::V1::GiftsController < ApplicationController
         end
     end
 
+    def update
+        @gift = Gift.find(params[:id])
+        if @gift.update(gift_params)
+            @gift.save
+            render json: @gift
+        else
+            render json: {error: "Unable to create this gift"}, status: 400
+        end
+    end
+
     def destroy
-      @gift=Gift.find_by(id: params[:id])
+      @gift = Gift.find_by(id: params[:id])
       @gift.delete
-      render json: @gifts
+      render json: Gift.all
     end
 
     private

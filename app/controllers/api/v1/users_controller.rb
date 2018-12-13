@@ -25,6 +25,21 @@ class Api::V1::UsersController < ApplicationController
       end
   end
 
+  def update
+      @user = User.find(params[:id])
+      if @user.update(user_params)
+          @user.save
+          render json: @user
+      else
+          render json: {error: "Unable to find this user"}, status: 400
+      end
+  end
+
+  def destroy
+    @user = Gift.find_by(id: params[:id])
+    @user.delete
+    render json: User.all
+  end
 
   private
 
