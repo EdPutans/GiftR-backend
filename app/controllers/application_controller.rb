@@ -23,7 +23,7 @@ def decode_token(token)
   begin
     JWT.decode(token,secret)
   rescue JWT::DecodeError
-    [{e:'helep'}]
+    [{error:'broken backend stuffs happening.'}]
   end
 end
 

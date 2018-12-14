@@ -5,6 +5,7 @@ Rails.application.routes.draw do
         resources :users
         post 'signin', to: 'users#signin'
         get 'validate', to: 'users#validate'
+        get 'get_items', to: 'users#get_items'
         resources :gifts
         # resources :follows
         # resources :friends

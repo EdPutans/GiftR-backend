@@ -1,6 +1,9 @@
 
 class Api::V1::UsersController < ApplicationController
 
+
+# ----critical -----
+
   def signin
     @user = User.find_by(email: params[:email])
     if @user && @user.authenticate(params[:password])
@@ -59,6 +62,15 @@ end
     @user = Gift.find_by(id: params[:id])
     @user.delete
     render json: User.all
+  end
+
+  def get_items
+    @user = get_current_user
+    if @user
+      render json: @user.gifts
+    else
+      render json: {error: "Error rendering stuff"}, status: 400
+    end
   end
 
   private
