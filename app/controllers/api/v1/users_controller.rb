@@ -44,11 +44,6 @@ end
     user_results=[]
     user_results << User.all.select {|u| (u.first_name.downcase.include? query if u.first_name)}
     user_results << User.all.select {|u| (u.last_name.downcase.include? query if u.last_name)}
-    puts " here are search params"
-    puts params[:search]
-    puts "here are user results:"
-    puts user_results
-    puts 'aaaaaa'
     if user_results.length > 0
       render json: user_results.flatten.map{|u| {first_name: u.first_name, last_name: u.last_name, gifts: u.gifts}}
     else
