@@ -40,10 +40,20 @@ end
   end
 
   def find_user
-    query = params[:search].downcase
+    # query = params[:search].downcase.split(' ')
+    query = params[:search].split(' ')
+    puts query
+    puts '^ query'
     user_results=[]
-    user_results << User.all.select {|u| (u.first_name.downcase.include? query if u.first_name)}
-    user_results << User.all.select {|u| (u.last_name.downcase.include? query if u.last_name)}
+    
+    User.all.each do |u|
+      query.each do |q|
+        user_results << u if u.first_name && (u.first_name.include? q) || u.last_name  && (u.last_name.include? q)
+      end
+    end
+
+      # user_results << User.all.select {|u| (u.first_name.downcase.include? q if u.first_name) || (u.first_name.downcase.include? q if u.first_name)}
+
     if user_results.length > 0
       render json: user_results.flatten.map{|u| {first_name: u.first_name, last_name: u.last_name, gifts: u.gifts}}
     else
