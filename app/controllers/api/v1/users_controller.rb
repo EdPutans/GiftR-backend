@@ -49,12 +49,14 @@ end
   end
 
   def update
-      @user = User.find(params[:id])
-      if @user.update(user_params)
+      @user = User.find_by(email: params[:email])
+      if @user && @user.authenticate(params[:password])
+          puts "user authenticated"
+          @user.update(user_params)
           @user.save
           render json: @user
       else
-          render json: {error: "Unable to find this user"}, status: 400
+          render json: {error: "Could not patch user"}, status: 400
       end
   end
 
