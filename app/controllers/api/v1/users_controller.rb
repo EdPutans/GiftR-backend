@@ -41,22 +41,27 @@ end
 
   def find_user
     # query = params[:search].downcase.split(' ')
-    query = params[:search].split(' ')
+    query = params[:search].downcase.split(' ').join('').split('')
     puts query
     puts '^ query'
     user_results=[]
-    
     User.all.each do |u|
-      query.each do |q|
-        user_results << u if u.first_name && (u.first_name.include? q) || u.last_name  && (u.last_name.include? q)
-      end
+      letter_set = "#{u.first_name.downcase}#{u.last_name.downcase}".split('') if u.last_name && u.first_name
+      letter_set = u.first_name.downcase.split('') if u.first_name && !u.last_name
+      letter_set = u.last_name.downcase.split('') if !u.first_name && u.last_name
+
+      user_results << u if query.all? {|l| letter_set.include?(l)}
     end
 
       # user_results << User.all.select {|u| (u.first_name.downcase.include? q if u.first_name) || (u.first_name.downcase.include? q if u.first_name)}
 
     if user_results.length > 0
+      puts '--good--'
+      puts user_results
       render json: user_results.flatten.map{|u| {first_name: u.first_name, last_name: u.last_name, gifts: u.gifts}}
     else
+      puts '--bad--'
+      puts user_results
       render json: {error: "No users found"}, status: 400
     end
   end
