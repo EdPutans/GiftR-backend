@@ -40,10 +40,10 @@ end
   end
 
   def find_user
-    query = params[:search]
+    query = params[:search].downcase
     user_results=[]
-    user_results << User.all.select {|u| (u.first_name.include? query if u.first_name)}
-    user_results << User.all.select {|u| (u.last_name.include? query if u.last_name)}
+    user_results << User.all.select {|u| (u.first_name.downcase.include? query if u.first_name)}
+    user_results << User.all.select {|u| (u.last_name.downcase.include? query if u.last_name)}
     puts " here are search params"
     puts params[:search]
     puts "here are user results:"
