@@ -17,7 +17,7 @@ def validate
   puts request.headers['Authorization']
   @user = get_current_user
   if @user
-    render json: {id: @user.id, email: @user.email, password: @user.password, gifts: @user.gifts, token: issue_token(@user.id)}
+    render json: {id: @user.id, gifts: @user.gifts, token: issue_token(@user.id), user: @user}
   else
     render json: {error: "Invalid credentianls."}, status: 401
   end
@@ -49,8 +49,8 @@ end
   end
 
   def update
-      @user = User.find_by(email: params[:email])
-      if @user && @user.authenticate(params[:password])
+      @user = User.find_by(id: params[:id])
+      if @user && @user.authenticate(params[:old_password])
           puts "user authenticated"
           @user.update(user_params)
           @user.save
@@ -60,11 +60,13 @@ end
       end
   end
 
+
   def destroy
     @user = Gift.find_by(id: params[:id])
     @user.delete
     render json: User.all
   end
+
 
   def get_items
     @user = get_current_user
@@ -78,8 +80,8 @@ end
   private
 
   def user_params
-      params.require(:user).permit(:first_name, :last_name, :email, :password, :password_digest, :age, :img_url)
-      # password_digest or stretch with JWT
+      params.require(:user).permit(:first_name, :last_name, :email, :password, :password_digest, :age, :img_url, :old_password)
+
   end
 
 end
