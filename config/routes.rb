@@ -6,7 +6,8 @@ Rails.application.routes.draw do
         post 'signin', to: 'users#signin'
         get 'validate', to: 'users#validate'
         get 'get_items', to: 'users#get_items'
-        patch 'patch_by_id/:id', to: 'users#patch_by_id/'
+        post 'users/search_user', to: 'users#find_user'
+        # patch 'patch_by_id/:id', to: 'users#patch_by_id/'
         resources :gifts
         # resources :follows
         # resources :friends

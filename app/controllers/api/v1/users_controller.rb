@@ -39,6 +39,23 @@ end
       end
   end
 
+  def find_user
+    query = params[:search]
+    user_results=[]
+    user_results << User.all.select {|u| (u.first_name.include? query if u.first_name)}
+    user_results << User.all.select {|u| (u.last_name.include? query if u.last_name)}
+    puts " here are search params"
+    puts params[:search]
+    puts "here are user results:"
+    puts user_results
+    puts 'aaaaaa'
+    if user_results.length > 0
+      render json: user_results.flatten.map{|u| {first_name: u.first_name, last_name: u.last_name, gifts: u.gifts}}
+    else
+      render json: {error: "No users found"}, status: 400
+    end
+  end
+
   def show
       @user = User.find_by(id: params[:id])
       if @user
@@ -80,7 +97,7 @@ end
   private
 
   def user_params
-      params.require(:user).permit(:first_name, :last_name, :email, :password, :password_digest, :age, :img_url, :old_password)
+      params.require(:user).permit(:first_name, :last_name, :email, :password, :password_digest, :age, :img_url, :old_password, :search)
 
   end
 
