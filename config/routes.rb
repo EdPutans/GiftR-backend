@@ -7,10 +7,13 @@ Rails.application.routes.draw do
         get 'validate', to: 'users#validate'
         get 'get_items', to: 'users#get_items'
         post 'users/search_user', to: 'users#find_user'
-        # patch 'patch_by_id/:id', to: 'users#patch_by_id/'
+
+        get 'users/:id/friends', to: 'users#friends'
+        post 'users/:id/add_friend', to: 'users#add_friend'
+
+        patch 'users/:id/confirm_or_reject', to: 'users#confirm_or_reject'
+
         resources :gifts
-        # resources :follows
-        # resources :friends
       end
     end
   end

@@ -1,7 +1,6 @@
 
 class Api::V1::UsersController < ApplicationController
 
-
 # ----critical -----
 
   def signin
@@ -25,6 +24,43 @@ end
 
 
 # -----------------------------------------------------
+
+  def friends
+    @user = User.find_by(id: params[:id])
+    if @user
+      friends = (@user.friendships + @user.back_friendships).flatten
+      friends = friends.map{ |friend| User.where(id: friend.friend_id)}.flatten
+      render_friends = friends.map{|f| {id: f.id, first_name: f.first_name, last_name: f.last_name, age: f.age} }
+      puts render_friends
+      render json: {friends: render_friends}
+    else
+      render json: {error: 'user not found'}, status: 404
+    end
+  end
+
+
+  def add_friend
+    @user= User.find_by(id: params[:id])
+    if @user
+      Friendship.create(user_id: params[:id], friend_id: params[:friend_id])
+      render json: @user.friendships
+    else
+      render json: {error: 'user not found'}, status: 404
+    end
+  end
+
+
+def confirm_or_reject
+  @friendship = Friendship.find_by(id: params[:id])
+  if @friendship.update(user_params)
+    render json: @friendship
+  else
+    render json: {error: "Unable to create this user"}, status: 404
+  end
+end
+
+
+
   def index
       @users = User.all
       render json: @users
@@ -49,18 +85,12 @@ end
       letter_set = "#{u.first_name.downcase}#{u.last_name.downcase}".split('') if u.last_name && u.first_name
       letter_set = u.first_name.downcase.split('') if u.first_name && !u.last_name
       letter_set = u.last_name.downcase.split('') if !u.first_name && u.last_name
-
       user_results << u if query.all? {|l| letter_set.include?(l)}
     end
-
-      # user_results << User.all.select {|u| (u.first_name.downcase.include? q if u.first_name) || (u.first_name.downcase.include? q if u.first_name)}
-
     if user_results.length > 0
-      puts '--good--'
       puts user_results
       render json: user_results.flatten.map{|u| {first_name: u.first_name, last_name: u.last_name, gifts: u.gifts}}
     else
-      puts '--bad--'
       puts user_results
       render json: {error: "No users found"}, status: 400
     end
@@ -107,8 +137,7 @@ end
   private
 
   def user_params
-      params.require(:user).permit(:first_name, :last_name, :email, :password, :password_digest, :age, :img_url, :old_password, :search)
-
+      params.require(:user).permit(:first_name, :last_name, :email, :password, :password_digest, :age, :img_url, :old_password, :search, :confirmed, :rejected, :friend_id)
   end
 
 end
