@@ -52,11 +52,12 @@ end
   end
 
   def friend_request
-    @friendship = Friendship.create(user_id: params[:id], friend_id: params[:friend_id], confirmed: false, rejected: false)
-    if @friendship
+    @existing_friendship = Friendship.find_by(user_id: params[:id], friend_id: params[:friend_id], confirmed: true) || Friendship.find_by(user_id: params[:friend_id], friend_id: params[:id], confirmed: true)
+    if !@existing_friendship
+      @friendship = Friendship.create(user_id: params[:id], friend_id: params[:friend_id], confirmed: false, rejected: false)
       render json: @friendship
     else
-      render json: {error: 'error creating a friend request'}, status: 401
+      render json: {error: 'friendship already exists'}, status: 401
     end
   end
 
@@ -73,20 +74,16 @@ end
 
 
 def confirm_or_reject
-  @friendship = Friendship.find_by(id: params[:id])
-  if @friendship.update(user_params)
+  # the request must reverse friend_id and user_id, to match the apps purpose
+  @friendship = Friendship.find_by(user_id: params[:user_id], friend_id: [:friend_id] )
+  if @friendship.update()
+    @friendship.
     render json: @friendship
   else
     render json: {error: "Unable to create this user"}, status: 404
   end
 end
 
-
-  #
-  # def index
-  #     @users = User.all
-  #     render json: @users
-  # end
 
   def create
       @user = User.new(user_params)
@@ -97,8 +94,9 @@ end
       end
   end
 
+
+
   def find_user
-    # query = params[:search].downcase.split(' ')
     query = params[:search].downcase.split(' ').join('').split('')
     puts query
     puts '^ query'
@@ -117,15 +115,8 @@ end
       render json: {error: "No users found"}, status: 400
     end
   end
-  #
-  # def show
-  #     @user = User.find_by(id: params[:id])
-  #     if @user
-  #         render json: @user
-  #     else
-  #         render json: {error: "User was not found"}, status: 404
-  #     end
-  # end
+
+
 
   def update
       @user = User.find_by(id: params[:id])
@@ -140,11 +131,6 @@ end
   end
 
 
-  # def destroy
-  #   @user = User.find_by(id: params[:id])
-  #   @user.delete
-  #   render json: User.all
-  # end
 
 
   def get_items
@@ -159,7 +145,7 @@ end
   private
 
   def user_params
-      params.require(:user).permit(:first_name, :last_name, :email, :password, :password_digest, :age, :img_url, :old_password, :search, :friend_id)
+      params.require(:user).permit(:first_name, :last_name, :email, :password, :password_digest, :age, :img_url, :old_password, :search, :friend_id, :confirmed, :rejected)
   end
 
 end

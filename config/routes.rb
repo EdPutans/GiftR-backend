@@ -14,7 +14,7 @@ Rails.application.routes.draw do
         post 'users/:id/add_friend', to: 'users#add_friend'
         post 'users/friend_request', to: 'users#friend_request'
 
-        patch 'users/:id/confirm_or_reject', to: 'users#confirm_or_reject'
+        patch 'users/confirm_or_reject', to: 'users#confirm_or_reject'
 
         resources :gifts
       end
