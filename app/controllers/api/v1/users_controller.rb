@@ -53,7 +53,10 @@ end
 
   def friend_request
     @existing_friendship = Friendship.find_by(user_id: params[:id], friend_id: params[:friend_id], confirmed: true) || Friendship.find_by(user_id: params[:friend_id], friend_id: params[:id], confirmed: true)
-    if !@existing_friendship
+    @unconfirmed_friendship = Friendship.find_by(user_id: params[:id], friend_id: params[:friend_id], confirmed: nil, rejected: nil) || Friendship.find_by(user_id: params[:friend_id], friend_id: params[:id], confirmed: nil, rejected: nil)
+    if @unconfirmed_friendship
+      render json: {error: 'previous request still not replied to'}, status: 400
+    elsif !@existing_friendship && !@unconfirmed_friendship
       @friendship = Friendship.create(user_id: params[:id], friend_id: params[:friend_id], confirmed: false, rejected: false)
       render json: @friendship
     else
