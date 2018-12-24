@@ -22,7 +22,6 @@ def validate
   end
 end
 
-
 # -----------------------------------------------------
 
   def friends
@@ -41,11 +40,11 @@ end
   def unaccepted
     @user = User.find_by(id: params[:id])
     if @user
-      unaccepted = (@user.friendships).select{|f| !f.confirmed && !f.rejected}
+      unaccepted = (@user.back_friendships).select{|f| !f.confirmed && !f.rejected}
       unaccepted = unaccepted.map{ |friend| User.where(id: friend.friend_id)}.flatten
       render_unaccepted = unaccepted.map{|f| {id: f.id, first_name: f.first_name, last_name: f.last_name, age: f.age, wishes: f.gifts} }
       puts render_unaccepted
-      render json: {unaccepted: render_unaccepted}
+      render json: render_unaccepted
     else
       render json: {error: 'user not found'}, status: 404
     end
@@ -55,6 +54,7 @@ end
 
   def friend_request
     @existing_friendship = Friendship.find_by(user_id: params[:id], friend_id: params[:friend_id], confirmed: true) || Friendship.find_by(user_id: params[:friend_id], friend_id: params[:id], confirmed: true)
+
     @unconfirmed_friendship = Friendship.find_by(user_id: params[:id], friend_id: params[:friend_id], confirmed: false || nil, rejected: false || nil) || Friendship.find_by(user_id: params[:friend_id], friend_id: params[:id], confirmed: false || nil, rejected: false || nil)
 
     if @unconfirmed_friendship
@@ -73,7 +73,6 @@ end
     end
 
   end
-
 
 
   def add_friend
@@ -106,7 +105,6 @@ end
           render json: {error: "Unable to create this user"}, status: 400
       end
   end
-
 
 
   def find_user
