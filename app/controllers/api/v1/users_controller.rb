@@ -28,7 +28,7 @@ end
   def friends
     @user = User.find_by(id: params[:id])
     if @user
-      friends = (@user.friendships + @user.back_friendships).flatten
+      friends = (@user.friendships + @user.back_friendships).flatten.select{|f| f.confirmed}
       friends = friends.map{ |friend| User.where(id: friend.friend_id)}.flatten
       render_friends = friends.map{|f| {id: f.id, first_name: f.first_name, last_name: f.last_name, age: f.age, wishes: f.gifts} }
       puts render_friends
