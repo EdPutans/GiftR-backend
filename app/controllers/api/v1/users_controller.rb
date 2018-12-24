@@ -30,7 +30,7 @@ end
     if @user
       friends = (@user.friendships + @user.back_friendships).flatten
       friends = friends.map{ |friend| User.where(id: friend.friend_id)}.flatten
-      render_friends = friends.map{|f| {id: f.id, first_name: f.first_name, last_name: f.last_name, age: f.age} }
+      render_friends = friends.map{|f| {id: f.id, first_name: f.first_name, last_name: f.last_name, age: f.age, wishes: f.gifts} }
       puts render_friends
       render json: {friends: render_friends}
     else
@@ -60,11 +60,11 @@ def confirm_or_reject
 end
 
 
-
-  def index
-      @users = User.all
-      render json: @users
-  end
+  #
+  # def index
+  #     @users = User.all
+  #     render json: @users
+  # end
 
   def create
       @user = User.new(user_params)
@@ -89,21 +89,21 @@ end
     end
     if user_results.length > 0
       puts user_results
-      render json: user_results.flatten.map{|u| {first_name: u.first_name, last_name: u.last_name, gifts: u.gifts}}
+      render json: user_results.flatten.map{|u| {id: u.id, first_name: u.first_name, last_name: u.last_name, gifts: u.gifts}}
     else
       puts user_results
       render json: {error: "No users found"}, status: 400
     end
   end
-
-  def show
-      @user = User.find_by(id: params[:id])
-      if @user
-          render json: @user
-      else
-          render json: {error: "User was not found"}, status: 404
-      end
-  end
+  #
+  # def show
+  #     @user = User.find_by(id: params[:id])
+  #     if @user
+  #         render json: @user
+  #     else
+  #         render json: {error: "User was not found"}, status: 404
+  #     end
+  # end
 
   def update
       @user = User.find_by(id: params[:id])
@@ -118,11 +118,11 @@ end
   end
 
 
-  def destroy
-    @user = Gift.find_by(id: params[:id])
-    @user.delete
-    render json: User.all
-  end
+  # def destroy
+  #   @user = User.find_by(id: params[:id])
+  #   @user.delete
+  #   render json: User.all
+  # end
 
 
   def get_items
