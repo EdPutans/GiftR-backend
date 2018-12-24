@@ -28,13 +28,35 @@ end
   def friends
     @user = User.find_by(id: params[:id])
     if @user
-      friends = (@user.friendships + @user.back_friendships).flatten.select{|f| f.confirmed}
-      friends = friends.map{ |friend| User.where(id: friend.friend_id)}.flatten
+      confirmed_friends = (@user.friendships + @user.back_friendships).flatten.select{|f| f.confirmed}
+      friends = confirmed_friends.map{ |friend| User.where(id: friend.friend_id)}.flatten
       render_friends = friends.map{|f| {id: f.id, first_name: f.first_name, last_name: f.last_name, age: f.age, wishes: f.gifts} }
       puts render_friends
       render json: {friends: render_friends}
     else
       render json: {error: 'user not found'}, status: 404
+    end
+  end
+
+  def unaccepted
+    @user = User.find_by(id: params[:id])
+    if @user
+      unaccepted = (@user.friendships).select{|f| !f.confirmed && !f.rejected}
+      unaccepted = unaccepted.map{ |friend| User.where(id: friend.friend_id)}.flatten
+      render_unaccepted = unaccepted.map{|f| {id: f.id, first_name: f.first_name, last_name: f.last_name, age: f.age, wishes: f.gifts} }
+      puts render_unaccepted
+      render json: {unaccepted: render_unaccepted}
+    else
+      render json: {error: 'user not found'}, status: 404
+    end
+  end
+
+  def friend_request
+    @friendship = Friendship.create(user_id: params[:id], friend_id: params[:friend_id], confirmed: false, rejected: false)
+    if @friendship
+      render json: @friendship
+    else
+      render json: {error: 'error creating a friend request'}, status: 401
     end
   end
 
@@ -137,7 +159,7 @@ end
   private
 
   def user_params
-      params.require(:user).permit(:first_name, :last_name, :email, :password, :password_digest, :age, :img_url, :old_password, :search, :confirmed, :rejected, :friend_id)
+      params.require(:user).permit(:first_name, :last_name, :email, :password, :password_digest, :age, :img_url, :old_password, :search, :friend_id)
   end
 
 end
