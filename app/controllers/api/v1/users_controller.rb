@@ -41,7 +41,7 @@ end
     @user = User.find_by(id: params[:id])
     if @user
       unaccepted = (@user.back_friendships).select{|f| !f.confirmed && !f.rejected}
-      unaccepted = unaccepted.map{ |friend| User.where(id: friend.friend_id)}.flatten
+      unaccepted = unaccepted.map{ |friend| User.where(id: friend.user_id)}.flatten
       render_unaccepted = unaccepted.map{|f| {id: f.id, first_name: f.first_name, last_name: f.last_name, age: f.age, wishes: f.gifts} }
       puts render_unaccepted
       render json: render_unaccepted
