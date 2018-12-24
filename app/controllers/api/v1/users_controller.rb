@@ -51,18 +51,29 @@ end
     end
   end
 
+
+
   def friend_request
     @existing_friendship = Friendship.find_by(user_id: params[:id], friend_id: params[:friend_id], confirmed: true) || Friendship.find_by(user_id: params[:friend_id], friend_id: params[:id], confirmed: true)
-    @unconfirmed_friendship = Friendship.find_by(user_id: params[:id], friend_id: params[:friend_id], confirmed: nil, rejected: nil) || Friendship.find_by(user_id: params[:friend_id], friend_id: params[:id], confirmed: nil, rejected: nil)
+    @unconfirmed_friendship = Friendship.find_by(user_id: params[:id], friend_id: params[:friend_id], confirmed: false || nil, rejected: false || nil) || Friendship.find_by(user_id: params[:friend_id], friend_id: params[:id], confirmed: false || nil, rejected: false || nil)
+
     if @unconfirmed_friendship
       render json: {error: 'previous request still not replied to'}, status: 400
+
+    elsif @existing_friendship
+      render json: {error: 'friendship already exists'}, status: 401
+
     elsif !@existing_friendship && !@unconfirmed_friendship
       @friendship = Friendship.create(user_id: params[:id], friend_id: params[:friend_id], confirmed: false, rejected: false)
-      render json: @friendship
-    else
-      render json: {error: 'friendship already exists'}, status: 401
+      if @friendship
+        render json: @friendship
+      else
+        render json: {error: 'could not create friendship'}
+      end
     end
+
   end
+
 
 
   def add_friend
@@ -77,13 +88,12 @@ end
 
 
 def confirm_or_reject
-  # the request must reverse friend_id and user_id, to match the apps purpose
+  # the request must come in reverse friend_id and user_id from the FRONT END, to match the apps purpose
   @friendship = Friendship.find_by(user_id: params[:user_id], friend_id: [:friend_id] )
-  if @friendship.update()
-    @friendship.
+  if @friendship.update(user_params)
     render json: @friendship
   else
-    render json: {error: "Unable to create this user"}, status: 404
+    render json: {error: "Unable to update request"}, status: 404
   end
 end
 
