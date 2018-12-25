@@ -4,11 +4,18 @@ class Api::V1::FriendshipsController < ApplicationController
     render json: Friendship.all
   end
 
-def create
-    @existing_friendship = Friendship.find_by(user_id: params[:user_id], friend_id: params[:friend_id], confirmed: true) || Friendship.find_by(user_id: params[:friend_id], friend_id: params[:id], confirmed: true)
-
-    @unconfirmed_friendship = Friendship.find_by(user_id: params[:id], friend_id: params[:friend_id], confirmed: false || nil, rejected: false || nil) || Friendship.find_by(user_id: params[:friend_id], friend_id: params[:id], confirmed: false || nil, rejected: false || nil)
-
+  def create
+    puts "PARAMS:"
+    puts params
+    puts 'eeeeeeee'
+    @existing_friendship = Friendship.find_by(user_id: params[:user_id], friend_id: params[:friend_id], confirmed: true)
+    @existing_friendship = Friendship.find_by(user_id: params[:friend_id], friend_id: params[:id], confirmed: true) if !@existing_friendship
+    puts "found it!"
+    puts @existing_friendship
+    @unconfirmed_friendship = Friendship.find_by(user_id: params[:user_id], friend_id: params[:friend_id], confirmed: false, rejected: false)
+    @unconfirmed_friendship =  Friendship.find_by(user_id: params[:friend_id], friend_id: params[:user_id], confirmed: false, rejected: false) if !@unconfirmed_friendship
+    puts 'unconfirmed:'
+    puts @unconfirmed_friendship
     if @unconfirmed_friendship
       render json: {error: 'previous request still not replied to'}, status: 400
 
