@@ -89,7 +89,8 @@ end
 def confirm_or_reject
   # the request must come in reverse friend_id and user_id from the FRONT END, to match the apps purpose
   @friendship = Friendship.find_by(user_id: params[:user_id], friend_id: [:friend_id] )
-  if @friendship.update(user_params)
+  puts params
+  if @friendship.update(params)
     render json: @friendship
   else
     render json: {error: "Unable to update request"}, status: 404
@@ -140,8 +141,6 @@ end
           render json: {error: "Could not patch user"}, status: 400
       end
   end
-
-
 
 
   def get_items
