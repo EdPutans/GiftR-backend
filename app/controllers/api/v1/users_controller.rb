@@ -127,17 +127,17 @@ end
           end
       end
 
-  # def update
-  #     @user = User.find_by(id: params[:id])
-  #     if @user && @user.authenticate(params[:old_password])
-  #         puts "user authenticated"
-  #         @user.update(user_params)
-  #         @user.save
-  #         render json: @user
-  #     else
-  #         render json: {error: "Could not patch user"}, status: 400
-  #     end
-  # end
+  def update
+      @user = User.find_by(id: params[:id])
+      if @user && @user.authenticate(params[:old_password])
+          puts "user authenticated"
+          @user.update(user_params)
+          @user.save
+          render json: @user
+      else
+          render json: {error: "Could not patch user"}, status: 400
+      end
+  end
 
 
   def get_items
