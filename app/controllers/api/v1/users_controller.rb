@@ -28,28 +28,16 @@ end
     @user = User.find_by(id: params[:id])
     if @user
       confirmed_friends = (@user.friendships + @user.back_friendships).flatten.select{|f| f.confirmed}
-      friends = confirmed_friends.map{ |friend| User.where(id: friend.friend_id)}.flatten
+      friends = confirmed_friends.map{ |friend| User.where(id: friend.user_id)}.flatten
       render_friends = friends.map{|f| {id: f.id, first_name: f.first_name, last_name: f.last_name, age: f.age, wishes: f.gifts} }
-      puts render_friends
-      render json: {friends: render_friends}
+      render_friends = render_friends.select{|person| person[:id] != @user.id}
+      render json: render_friends
     else
       render json: {error: 'user not found'}, status: 404
     end
   end
 
-  def unaccepted
-    @user = User.find_by(id: params[:id])
-    if @user
-      unaccepted = (@user.back_friendships).select{|f| !f.confirmed && !f.rejected}
-      unaccepted = unaccepted.map{ |friend| User.where(id: friend.user_id)}.flatten
-      render_unaccepted = unaccepted.map{|f| {id: f.id, first_name: f.first_name, last_name: f.last_name, age: f.age, wishes: f.gifts} }
-      puts render_unaccepted
-      render json: render_unaccepted
-    else
-      render json: {error: 'user not found'}, status: 404
-    end
-  end
-
+``
 
 
   def friend_request
@@ -89,8 +77,9 @@ end
 def confirm_or_reject
   # the request must come in reverse friend_id and user_id from the FRONT END, to match the apps purpose
   @friendship = Friendship.find_by(user_id: params[:user_id], friend_id: [:friend_id] )
+  @friendship? (puts @friendship) : (puts "cant find friendhsip")
   puts params
-  if @friendship.update(params)
+  if @friendship.update()
     render json: @friendship
   else
     render json: {error: "Unable to update request"}, status: 404
@@ -129,18 +118,26 @@ end
   end
 
 
-
-  def update
-      @user = User.find_by(id: params[:id])
-      if @user && @user.authenticate(params[:old_password])
-          puts "user authenticated"
-          @user.update(user_params)
-          @user.save
-          render json: @user
-      else
-          render json: {error: "Could not patch user"}, status: 400
+      def show
+          @user = User.find_by(id: params[:id])
+          if @user
+              render json: @user
+          else
+              render json: {error: "User was not found"}, status: 404
+          end
       end
-  end
+
+  # def update
+  #     @user = User.find_by(id: params[:id])
+  #     if @user && @user.authenticate(params[:old_password])
+  #         puts "user authenticated"
+  #         @user.update(user_params)
+  #         @user.save
+  #         render json: @user
+  #     else
+  #         render json: {error: "Could not patch user"}, status: 400
+  #     end
+  # end
 
 
   def get_items

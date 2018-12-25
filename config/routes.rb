@@ -7,7 +7,7 @@ Rails.application.routes.draw do
         get 'validate', to: 'users#validate'
         get 'get_items', to: 'users#get_items'
         get 'users/:id/friends', to: 'users#friends'
-        get 'users/:id/unaccepted', to: 'users#unaccepted'
+        get 'friendships/:user_id/unaccepted', to: 'friendships#unaccepted'
 
         post 'signin', to: 'users#signin'
         post 'users/search_user', to: 'users#find_user'
@@ -15,7 +15,7 @@ Rails.application.routes.draw do
         post 'users/friend_request', to: 'users#friend_request'
 
         patch 'users/confirm_or_reject', to: 'users#confirm_or_reject'
-
+        resources :friendships
         resources :gifts
       end
     end
