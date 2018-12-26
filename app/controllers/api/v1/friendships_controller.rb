@@ -32,21 +32,42 @@ class Api::V1::FriendshipsController < ApplicationController
     end
   end
 
+  def unaccepted_ids
+    render json: get_unaccepted.map{ |u| u[:user].id}
+  end
 
-  def unaccepted
+  def active_requests
+    render json: get_active_requests
+  end
+
+  def active_request_ids
+    render json: get_active_requests.map{ |u| u[:user].id}
+  end
+
+  def get_active_requests
+    @user = User.find_by(id: params[:user_id])
+    if @user
+      unaccepted = (@user.friendships).select{|f| !f.confirmed && !f.rejected}
+      unaccepted = unaccepted.map{ |friendship| {user: User.find_by(id: friendship.friend_id), friendship_id: friendship.id, confirmed: friendship.confirmed, rejected: friendship.rejected }}.flatten
+      return unaccepted
+    else
+      return {error: 'user not found'}
+    end
+  end
+
+  def get_unaccepted
     @user = User.find_by(id: params[:user_id])
     if @user
       unaccepted = (@user.back_friendships).select{|f| !f.confirmed && !f.rejected}
       unaccepted = unaccepted.map{ |friendship| {user: User.find_by(id: friendship.user_id), friendship_id: friendship.id, confirmed: friendship.confirmed, rejected: friendship.rejected }}.flatten
-      puts "unaccepted:"
-      puts unaccepted
-      puts "-----------------"
-      # render_unaccepted = unaccepted.map{|f| {id: f[:user].id, first_name: f[:user].first_name, last_name: f[:user].last_name, age: f[:user].age, wishes: f[:user].gifts} }
-      # puts render_unaccepted
-      render json: unaccepted
+      return unaccepted
     else
-      render json: {error: 'user not found'}, status: 404
+      return {error: 'user not found'}
     end
+  end
+
+  def unaccepted
+    render json: get_unaccepted
   end
 
 
