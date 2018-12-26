@@ -36,8 +36,8 @@ class Api::V1::FriendshipsController < ApplicationController
   def unaccepted
     @user = User.find_by(id: params[:user_id])
     if @user
-      unaccepted = (@user.friendships).select{|f| !f.confirmed && !f.rejected}
-      unaccepted = unaccepted.map{ |friendship| {user: User.find_by(id: friendship.friend_id), friendship_id: friendship.id, confirmed: friendship.confirmed, rejected: friendship.rejected }}.flatten
+      unaccepted = (@user.back_friendships).select{|f| !f.confirmed && !f.rejected}
+      unaccepted = unaccepted.map{ |friendship| {user: User.find_by(id: friendship.user_id), friendship_id: friendship.id, confirmed: friendship.confirmed, rejected: friendship.rejected }}.flatten
       puts "unaccepted:"
       puts unaccepted
       puts "-----------------"
