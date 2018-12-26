@@ -32,7 +32,7 @@ end
       friends << confirmed_friendships.map{ |friendship| User.find_by(id: friendship.friend_id)}.flatten
       friends << confirmed_friendships.map{ |friendship| User.find_by(id: friendship.user_id)}.flatten
       friends = friends.flatten
-      render_friends = friends.map{|f| {id: f.id, first_name: f.first_name, last_name: f.last_name, age: f.age, wishes: f.gifts} }
+      render_friends = friends.map{|f| {id: f.id, first_name: f.first_name, last_name: f.last_name, age: f.age, wishes: f.gifts, img_url: f.img_url} }
       # puts render_friends
       render_friends = render_friends.select{|person| person[:id] != @user.id}
       render json: render_friends
