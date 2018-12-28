@@ -5,7 +5,7 @@ Rails.application.routes.draw do
         resources :users
         resources :friendships
         resources :gifts
-
+        resources :santas
         get 'validate', to: 'users#validate'
         get 'get_items', to: 'users#get_items'
         get 'users/:id/friends', to: 'users#friends'

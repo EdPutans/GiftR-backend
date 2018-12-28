@@ -85,6 +85,9 @@ class Api::V1::FriendshipsController < ApplicationController
   end
 end
 
+# def notification_count
+#
+# end
 
 private
 

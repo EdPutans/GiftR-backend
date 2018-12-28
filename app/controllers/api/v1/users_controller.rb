@@ -114,7 +114,7 @@ end
     end
     if user_results.length > 0
       puts user_results
-      render json: user_results.flatten.map{|u| {id: u.id, first_name: u.first_name, last_name: u.last_name, gifts: u.gifts}}
+      render json: user_results.flatten.map{|u| {id: u.id, first_name: u.first_name, last_name: u.last_name, gifts: u.gifts, img_url: u.img_url}}
     else
       puts user_results
       render json: {error: "No users found"}, status: 400
