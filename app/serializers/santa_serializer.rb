@@ -18,8 +18,5 @@ class SantaSerializer < ActiveModel::Serializer
           last_name: object.receiver.last_name,
           gifts: object.receiver.gifts
         }}
-
       end
-
-
 end
