@@ -1,7 +1,7 @@
 class SantaSerializer < ActiveModel::Serializer
   # belongs_to :receiver
   # belongs_to :gifter
-  attributes :id, :receiver_id, :gifter_id, :details, :budget
+  attributes :id, :receiver_id, :gifter_id, :deadline, :budget
 
     def details
         return {

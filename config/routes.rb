@@ -19,7 +19,7 @@ Rails.application.routes.draw do
         post 'users/search_user', to: 'users#find_user'
         post 'users/:id/add_friend', to: 'users#add_friend'
         post 'users/friend_request', to: 'users#friend_request'
-        post 'santa/create_santa_list', to: 'santas#create_santa_list'
+        post 'santas/create_santa_list', to: 'santas#create_santa_list'
 
         patch 'users/confirm_or_reject', to: 'users#confirm_or_reject'
 

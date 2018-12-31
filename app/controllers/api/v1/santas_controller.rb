@@ -1,3 +1,5 @@
+require 'time'
+
 class Api::V1::SantasController < ApplicationController
 
   def index
@@ -7,9 +9,14 @@ class Api::V1::SantasController < ApplicationController
 
 
   def create_santa_list
-    list = params[:id_list]
+    puts params
+    puts params[:budget]
+    list = params[:list]
+    date = params[:deadline]
+    deadline = Date.new(date[0],date[1],date[2])
     result = []
-    result << list.map{|e| Santa.create(gifter_id: e[:gifter_id], receiver_id: e[:receiver_id], budget: e[:budget])}
+    result << list.map{|e| Santa.create(gifter_id: e[:gifter_id], receiver_id: e[:receiver_id], budget: params[:budget].to_f, deadline: deadline)}
+
     if result.length > 0
       render json: result.flatten
     else
@@ -36,6 +43,6 @@ class Api::V1::SantasController < ApplicationController
 private
 
   def santa_params
-    params.require(:santa).permit(:budget, :receiver_id, :gifter_id, :id, :id_list)
+    params.require(:santa).permit(:budget, :receiver_id, :gifter_id, :id, :list, :deadline)
   end
 end
