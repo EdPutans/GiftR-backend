@@ -20,11 +20,20 @@ class Api::V1::SantasController < ApplicationController
     if result.length > 0
       render json: result.flatten
     else
-      render json: {error: 'error creating santas'}
+      render json: {error: 'error creating santas'}, status: 401
     end
   end
 
-
+  def get_gifter_santas
+    @santas = Santa.where(gifter_id: params[:user_id])
+    puts 'REEE'
+    puts @santas
+    if @santas && @santas.length > 0
+      render json: @santas
+    else
+      render json: {error: "User has no santas"}, status: 400
+    end
+  end
 
   def show
     @santa = Santa.find_by(params[:id])

@@ -39,8 +39,8 @@ ActiveRecord::Schema.define(version: 2018_12_28_125427) do
   end
 
   create_table "santa", force: :cascade do |t|
-    t.string "receiver_id"
-    t.string "gifter_id"
+    t.integer "receiver_id"
+    t.integer "gifter_id"
     t.float "budget"
     t.datetime "deadline"
   end

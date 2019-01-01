@@ -15,6 +15,8 @@ Rails.application.routes.draw do
 
         get 'friendships/:user_id/unaccepted', to: 'friendships#unaccepted'
         get 'friendships/:user_id/unaccepted_ids', to: 'friendships#unaccepted_ids'
+        get 'users/:user_id/santas', to: 'santas#get_gifter_santas'
+
         post 'signin', to: 'users#signin'
         post 'users/search_user', to: 'users#find_user'
         post 'users/:id/add_friend', to: 'users#add_friend'
