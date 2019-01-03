@@ -23,6 +23,7 @@ Rails.application.routes.draw do
         post 'users/friend_request', to: 'users#friend_request'
         post 'santas/create_santa_list', to: 'santas#create_santa_list'
 
+        patch 'santas/:id/mark_read', to: 'santas#mark_read'
         patch 'users/confirm_or_reject', to: 'users#confirm_or_reject'
 
       end

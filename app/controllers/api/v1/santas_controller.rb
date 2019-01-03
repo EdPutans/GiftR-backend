@@ -7,6 +7,15 @@ class Api::V1::SantasController < ApplicationController
     render json: @santa, include: ['receiver.first_name, gifter.first_name']
   end
 
+  def mark_read
+    @santa = Santa.find_by(id: params[:id])
+    if @santa
+      @santa.update(read: true)
+      render json: @santa
+    else
+      render json: {error: 'could not find santa'}, status: 404
+    end
+  end
 
   def create_santa_list
     puts params
@@ -24,16 +33,19 @@ class Api::V1::SantasController < ApplicationController
     end
   end
 
+
   def get_gifter_santas
     @santas = Santa.where(gifter_id: params[:user_id])
     puts 'REEE'
-    puts @santas
+    @santas = @santas.select{|e| e.deadline > Time.new }
     if @santas && @santas.length > 0
       render json: @santas
     else
       render json: {error: "User has no santas"}, status: 400
     end
   end
+
+
 
   def show
     @santa = Santa.find_by(params[:id])
