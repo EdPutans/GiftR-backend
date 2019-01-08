@@ -8,7 +8,7 @@ class Api::V1::UsersController < ApplicationController
     if @user && @user.authenticate(params[:password])
       render json: {user: @user, token: issue_token({id: @user.id})}
     else
-      render json: {error:"Incorrect!"}, status: 401
+      render json: {error:"Incorrect login details!"}, status: 401
     end
   end
 
